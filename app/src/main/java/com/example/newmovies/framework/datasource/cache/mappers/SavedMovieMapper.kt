@@ -5,7 +5,7 @@ import com.example.newmovies.business.domain.util.EntityMapper
 import com.example.newmovies.framework.datasource.cache.model.CachedMovieDetail
 import com.example.newmovies.framework.datasource.cache.model.SavedMovie
 
-class SavedMovieMapper: EntityMapper<SavedMovie, MovieDetailResponse> {
+class SavedMovieMapper : EntityMapper<SavedMovie, MovieDetailResponse> {
     override fun mapFromEntity(entity: SavedMovie): MovieDetailResponse {
         return MovieDetailResponse(
             actors = entity.actors,
@@ -52,19 +52,11 @@ class SavedMovieMapper: EntityMapper<SavedMovie, MovieDetailResponse> {
         )
     }
 
-    fun entityListToResponseList(entities: List<SavedMovie>): List<MovieDetailResponse>{
-        val list: ArrayList<MovieDetailResponse> = ArrayList()
-        for(entity in entities){
-            list.add(mapFromEntity(entity))
-        }
-        return list
+    fun entityListToResponseList(entity: SavedMovie): MovieDetailResponse {
+        return mapFromEntity(entity)
     }
 
-    fun responseListToEntityList(response: List<MovieDetailResponse>): List<SavedMovie>{
-        val list: ArrayList<SavedMovie> = ArrayList()
-        for(movie in response){
-            list.add(mapToEntity(movie))
-        }
-        return list
+    fun responseListToEntityList(response: MovieDetailResponse): SavedMovie {
+        return mapToEntity(response)
     }
 }

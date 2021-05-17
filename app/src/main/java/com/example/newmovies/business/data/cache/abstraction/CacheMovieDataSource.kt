@@ -27,4 +27,6 @@ interface CacheMovieDataSource {
     suspend fun getAllMovies(): List<SavedMovie>
 
     suspend fun getSavedMovie(imdbId: String): SavedMovie
+
+    suspend fun deleteSavedMovie(movie: SavedMovie)
 }

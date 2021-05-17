@@ -3,12 +3,10 @@ package com.example.newmovies.business.interactors
 import com.example.newmovies.business.data.cache.abstraction.CacheMovieDataSource
 import com.example.newmovies.business.data.network.abstraction.NetworkMovieDataSource
 import com.example.newmovies.business.domain.model.MovieDetailResponse
-import com.example.newmovies.business.domain.model.MovieResponse
 import com.example.newmovies.business.domain.state.DataState
-import com.example.newmovies.framework.datasource.cache.mappers.CacheMovieMapper
 import com.example.newmovies.framework.datasource.cache.mappers.CachedMovieDetailsMapper
+import com.example.newmovies.framework.datasource.cache.mappers.SavedMovieMapper
 import com.example.newmovies.framework.datasource.network.mappers.DetailResponseMapper
-import com.example.newmovies.framework.datasource.network.mappers.ResponseMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.lang.Exception
@@ -17,7 +15,8 @@ class GetMovieDetails(
     private val networkMovieDataSource: NetworkMovieDataSource,
     private val cacheMovieDataSource: CacheMovieDataSource,
     private val detailResponseMapper: DetailResponseMapper,
-    private val cacheMovieDetailMapper: CachedMovieDetailsMapper
+    private val cacheMovieDetailMapper: CachedMovieDetailsMapper,
+    private val savedMovieMapper: SavedMovieMapper
 ) {
 
     fun execute(
@@ -32,7 +31,7 @@ class GetMovieDetails(
             //convert into entity and insert into cash
             val cacheMovieDetail = cacheMovieDetailMapper.responseListToEntityList(movieDetail)
             cacheMovieDataSource.insertCachedMovieDetail(cacheMovieDetail)
-
+//            cacheMovieDataSource.insertMovieToWatchList(savedMovieMapper.responseListToEntityList(movieDetail))
             //query the cache and emit
             val cacheResult = cacheMovieDataSource.getMovieDetailsFromCache(imdbId)
 

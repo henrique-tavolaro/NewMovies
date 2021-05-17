@@ -3,7 +3,7 @@ package com.example.newmovies.framework.datasource.cache.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "moviesDb")
+@Entity(tableName = "saved_movie")
 data class SavedMovie(
     @PrimaryKey(autoGenerate = false)
     val imdbID: String,
@@ -15,8 +15,8 @@ data class SavedMovie(
     val poster: String,
     val title: String,
     val year: String,
-    val onToWatchList: Boolean,
-    val watched: Boolean,
+    var onToWatchList: Boolean,
+    var watched: Boolean,
     val myRating: Float
 
 )

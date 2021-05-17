@@ -47,10 +47,14 @@ class CacheMovieDataSourceImpl
     }
 
     override suspend fun getAllMovies(): List<SavedMovie> {
-        return movieDao.getAllMovies()
+        return movieDao.getAllSavedMovies()
     }
 
     override suspend fun getSavedMovie(imdbId: String): SavedMovie {
         return movieDao.getSavedMovie(imdbId)
+    }
+
+    override suspend fun deleteSavedMovie(movie: SavedMovie) {
+        movieDao.deleteSavedMovie(movie)
     }
 }

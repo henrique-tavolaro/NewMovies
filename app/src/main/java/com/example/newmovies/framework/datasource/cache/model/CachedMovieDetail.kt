@@ -3,7 +3,7 @@ package com.example.newmovies.framework.datasource.cache.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "caches_movie_details")
+@Entity(tableName = "cached_movie_details")
 data class CachedMovieDetail(
     @PrimaryKey(autoGenerate = false)
     val imdbID: String,

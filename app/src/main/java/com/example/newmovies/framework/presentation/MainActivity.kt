@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -31,13 +32,31 @@ class MainActivity : AppCompatActivity() {
             // A surface container using the 'background' color from the theme
 //                Surface(color = MaterialTheme.colors.background) {
             val movieList = viewModel.movieList.value
-            Button(onClick = {
-                viewModel.getMovie("batmano")
-                Log.d("debugtag2", movieList.toString())
-            }) {
-                Text(text = "click")
+            val movieDetail = viewModel.movieDetails.value
+           Column{
+               Button(onClick = {
+                   viewModel.getMovie("batman")
+                   Log.d("debugtag2", movieList.toString())
+               }) {
+                   Text(text = "click")
 
-            }
+               }
+               Button(onClick = {
+                   viewModel.getMovieDetails("tt0372784")
+                   Log.d("debugtag2", movieDetail.toString())
+               }) {
+                   Text(text = "click2")
+
+               }
+               Button(onClick = {
+                   viewModel.insertMovieToWatchList("tt0372784")
+                   Log.d("debugtag2", movieDetail.toString())
+               }) {
+                   Text(text = "click3")
+
+               }
+           }
+
 //                }
         }
     }

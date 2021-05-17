@@ -19,7 +19,7 @@ interface MovieDao {
     @Query("SELECT * FROM cached_movie WHERE title LIKE '%' || :query || '%'")
     suspend fun getMovieFromCache(query: String) : List<MovieResponse>
 
-    @Query("SELECT * FROM caches_movie_details WHERE imdbID = :imdbId")
+    @Query("SELECT * FROM cached_movie_details WHERE imdbID = :imdbId")
     suspend fun getMovieDetailFromCache(imdbId: String): MovieDetailResponse
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -34,12 +34,15 @@ interface MovieDao {
     @Update
     suspend fun updateMovieToWatchList(movie: SavedMovie)
 
-    @Transaction
-    @Query("SELECT * FROM moviesDb")
-    suspend fun getAllMovies() : List<SavedMovie>
+    @Delete
+    suspend fun deleteSavedMovie(movie: SavedMovie)
 
     @Transaction
-    @Query("SELECT * FROM moviesDb WHERE imdbID = :imdbId ")
+    @Query("SELECT * FROM saved_movie")
+    suspend fun getAllSavedMovies() : List<SavedMovie>
+
+    @Transaction
+    @Query("SELECT * FROM saved_movie WHERE imdbID = :imdbId ")
     suspend fun getSavedMovie(imdbId: String): SavedMovie
 
 }
