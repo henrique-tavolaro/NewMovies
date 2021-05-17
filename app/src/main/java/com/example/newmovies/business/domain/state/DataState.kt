@@ -1,36 +1,32 @@
-package com.codingwithmitch.cleannotes.business.domain.state
+package com.example.newmovies.business.domain.state
+
+import com.example.newmovies.business.domain.model.MovieResponse
 
 
-data class DataState<T>(
-    var stateMessage: StateMessage? = null,
-    var data: T? = null
+data class DataState<out T>(
+    val error: String? = null,
+    val data: T? = null,
+    val loading: Boolean = false
 ) {
 
     companion object {
 
         fun <T> error(
-            stateResponse: StateResponse
-        ): DataState<T> {
+            message: String,
+        ): DataState<T>{
             return DataState(
-                stateMessage = StateMessage(
-                    stateResponse
-                ),
-                data = null
+                error = message
             )
         }
 
-        fun <T> data(
-            stateResponse: StateResponse?,
-            data: T? = null
+        fun <T> success(
+            data: T
         ): DataState<T> {
             return DataState(
-                stateMessage = stateResponse?.let {
-                    StateMessage(
-                        it
-                    )
-                },
                 data = data
             )
         }
+
+        fun <T> loading(): DataState<T> = DataState(loading = true)
     }
 }

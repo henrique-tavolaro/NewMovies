@@ -2,6 +2,11 @@ package com.example.newmovies.di
 
 import android.content.Context
 import androidx.room.Room
+import com.example.newmovies.business.data.cache.abstraction.CacheMovieDataSource
+import com.example.newmovies.business.data.cache.implementation.CacheMovieDataSourceImpl
+import com.example.newmovies.business.data.network.abstraction.NetworkMovieDataSource
+import com.example.newmovies.business.data.network.implementation.NetworkMovieDataSourceImpl
+import com.example.newmovies.framework.datasource.cache.database.MovieDao
 import com.example.newmovies.framework.datasource.cache.database.MovieDatabase
 import com.example.newmovies.framework.datasource.cache.mappers.CacheMovieMapper
 import com.example.newmovies.framework.datasource.cache.mappers.CachedMovieDetailsMapper
@@ -78,5 +83,21 @@ class AppModule {
     @Singleton
     @Provides
     fun provideMovieDao(db: MovieDatabase) = db.getDao()
+
+    @Singleton
+    @Provides
+    fun provideCacheMovieDataSource(
+        movieDao: MovieDao
+    ) : CacheMovieDataSource {
+        return CacheMovieDataSourceImpl(movieDao)
+    }
+
+    @Singleton
+    @Provides
+    fun provideNetworkMovieDataSource(
+        retrofitService: RetrofitService
+    ) : NetworkMovieDataSource {
+        return NetworkMovieDataSourceImpl(retrofitService)
+    }
 
 }

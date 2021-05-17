@@ -66,20 +66,13 @@ class DetailResponseMapper: EntityMapper<MovieDetailResponse ,DetailResponse > {
         )
     }
 
-    fun entityListToResponseList(entities: List<MovieDetailResponse>): List<DetailResponse>{
-        val list: ArrayList<DetailResponse> = ArrayList()
-        for(entity in entities){
-            list.add(mapFromEntity(entity))
-        }
-        return list
+    fun entityListToResponseList(entity: MovieDetailResponse): DetailResponse{
+                return mapFromEntity(entity)
     }
 
-    fun responseListToEntityList(response: List<DetailResponse>): List<MovieDetailResponse>{
-        val list: ArrayList<MovieDetailResponse> = ArrayList()
-        for(movie in response){
-            list.add(mapToEntity(movie))
-        }
-        return list
+    fun responseListToEntityList(response: DetailResponse): MovieDetailResponse{
+
+        return mapToEntity(response)
     }
 
 }

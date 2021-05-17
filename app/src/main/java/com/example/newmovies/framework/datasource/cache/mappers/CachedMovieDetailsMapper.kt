@@ -64,19 +64,12 @@ class CachedMovieDetailsMapper: EntityMapper<CachedMovieDetail, MovieDetailRespo
         )
     }
 
-    fun entityListToResponseList(entities: List<CachedMovieDetail>): List<MovieDetailResponse>{
-        val list: ArrayList<MovieDetailResponse> = ArrayList()
-        for(entity in entities){
-            list.add(mapFromEntity(entity))
-        }
-        return list
+    fun entityListToResponseList(entity: CachedMovieDetail): MovieDetailResponse{
+        return mapFromEntity(entity)
     }
 
-    fun responseListToEntityList(response: List<MovieDetailResponse>): List<CachedMovieDetail>{
-        val list: ArrayList<CachedMovieDetail> = ArrayList()
-        for(movie in response){
-            list.add(mapToEntity(movie))
-        }
-        return list
+    fun responseListToEntityList(response: MovieDetailResponse): CachedMovieDetail{
+
+        return mapToEntity(response)
     }
 }

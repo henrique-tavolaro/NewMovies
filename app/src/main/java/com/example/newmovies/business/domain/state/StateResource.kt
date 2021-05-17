@@ -1,4 +1,4 @@
-package com.codingwithmitch.cleannotes.business.domain.state
+package com.example.newmovies.business.domain.state
 
 import android.view.View
 
