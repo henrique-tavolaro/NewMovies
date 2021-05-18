@@ -11,8 +11,7 @@ class DeleteSavedMovie(
 ) {
 
     fun execute(
-        imdbId: String,
-        savedMovie: SavedMovie
+        imdbId: String
     ): Flow<DataState<SavedMovie>> = flow {
         try {
             emit(DataState.loading())

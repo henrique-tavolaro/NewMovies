@@ -8,8 +8,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.newmovies.business.domain.model.MovieDetailResponse
 import com.example.newmovies.business.domain.model.MovieResponse
 import com.example.newmovies.business.interactors.*
-import com.example.newmovies.framework.datasource.cache.model.CachedMovieDetail
 import com.example.newmovies.framework.datasource.cache.model.SavedMovie
+import com.example.newmovies.framework.presentation.state.MovieEvent
+import com.example.newmovies.framework.presentation.state.MovieStateEvent
 import com.example.newmovies.util.TAG
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -34,13 +35,133 @@ class MovieViewModel
 
     val loading = mutableStateOf(false)
 
-    val movieList: MutableState<List<MovieResponse>> = mutableStateOf(listOf())
+    fun onTriggerEvent(event: MovieEvent){
+        viewModelScope.launch {
+            try {
+                when(event){
+                    is MovieEvent.AddMovieAsWatchedEvent -> {
+                        insertMovieAsWatched(event.imdbId)
+                    }
+                    is MovieEvent.AddMovieToWatchListEvent -> {
+                        insertMovieToWatchList(event.imdbId)
+                    }
+                    is MovieEvent.DeleteSavedMovieEvent -> {
+                        deleteSavedMovie(event.imdbId)
+                    }
+                    is MovieEvent.GetAllSavedMovieEvent -> {
+                        getAllSaved()
+                    }
+                    is MovieEvent.GetMovieDetailsEvent -> {
+                        getMovieDetails(event.imdbId)
+                    }
+                    is MovieEvent.GetSavedMovieEvent -> {
+                        getSavedMovie(event.imdbId)
+                    }
+                    is MovieEvent.SearchMovieEvent -> {
+                        getMovie(event.query)
+                    }
+                    is MovieEvent.UpdateMovieAsWatchedEvent -> {
+                        updateMovieAsWatched(event.imdbId)
+                    }
+                    is MovieEvent.UpdateMovieToWatchListEvent -> {
+                        updateMovieToWatchList(event.imdbId)
+                    }
+                }
+            } catch (e: Exception){
+                Log.e(TAG, "launchJob: Exception: ${e}, ${e.cause}")
+                e.printStackTrace()
+            }
+            finally {
+                Log.d(TAG, "launchJob: finally called.")
+            }
+        }
+    }
 
-    val movieToSave: MutableState<SavedMovie?> = mutableStateOf(null)
+    fun deleteSavedMovie(imdbId: String){
+        deleteSavedMovie.execute(imdbId).onEach { dataState ->
+            loading.value = dataState.loading
+
+            dataState.data?.let {
+                Log.d(TAG, it.toString())
+            }
+
+            dataState.error?.let {
+                Log.d(TAG, it)
+            }
+
+        }
+    }
+
+    val savedMovie: MutableState<SavedMovie?> = mutableStateOf(null)
+
+    private fun getSavedMovie(imdbId: String){
+        getSavedMovie.execute(imdbId).onEach { dataState ->
+            loading.value = dataState.loading
+
+            dataState.data?.let {
+                savedMovie.value = it
+            }
+
+            dataState.error?.let { error ->
+                Log.d(TAG, "movieListError: $error")
+
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    val getAllSaved: MutableState<List<SavedMovie>> = mutableStateOf(listOf())
+
+    private fun getAllSaved(){
+        getAllSavedMovies.execute().onEach { dataState ->
+            loading.value = dataState.loading
+
+            dataState.data?.let {
+                getAllSaved.value = it
+            }
+
+            dataState.error?.let { error ->
+                Log.d(TAG, "movieListError: $error")
+            }
+        }
+    }
+
+    val updateAsWatched: MutableState<SavedMovie?> = mutableStateOf(null)
+
+    private fun updateMovieAsWatched(imdbId: String) {
+        updateMovieAsWatched.execute(imdbId).onEach { dataState ->
+            loading.value = dataState.loading
+
+            dataState.data?.let {
+                updateAsWatched.value = it
+            }
+
+            dataState.error?.let { error ->
+                Log.d(TAG, "movieListError: $error")
+
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    val updateToWatchList: MutableState<SavedMovie?> = mutableStateOf(null)
+
+    private fun updateMovieToWatchList(imdbId: String) {
+        updateMovieToWatchList.execute(imdbId).onEach { dataState ->
+            loading.value = dataState.loading
+
+            dataState.data?.let {
+                updateToWatchList.value = it
+            }
+
+            dataState.error?.let { error ->
+                Log.d(TAG, "movieListError: $error")
+
+            }
+        }.launchIn(viewModelScope)
+    }
 
     val movieDetails: MutableState<MovieDetailResponse?> = mutableStateOf(null)
 
-    fun getMovieDetails(imdbId: String) {
+    private fun getMovieDetails(imdbId: String) {
         getMovieDetails.execute(imdbId).onEach { dataState ->
             loading.value = dataState.loading
 
@@ -56,13 +177,14 @@ class MovieViewModel
 
     }
 
+    val movieToSaveToWatchList: MutableState<SavedMovie?> = mutableStateOf(null)
 
-    fun insertMovieToWatchList(imdbId: String) {
+    private fun insertMovieToWatchList(imdbId: String) {
         addMovieToWatchList.execute(imdbId).onEach { dataState ->
             loading.value = dataState.loading
 
             dataState.data?.let {
-                movieToSave.value = it
+                movieToSaveToWatchList.value = it
             }
 
             dataState.error?.let { error ->
@@ -72,7 +194,26 @@ class MovieViewModel
         }.launchIn(viewModelScope)
     }
 
-    fun getMovie(query: String) {
+    val movieSavedAsWatched: MutableState<SavedMovie?> = mutableStateOf(null)
+
+    private fun insertMovieAsWatched(imdbId: String) {
+        addMovieAsWatched.execute(imdbId).onEach { dataState ->
+            loading.value = dataState.loading
+
+            dataState.data?.let {
+                movieSavedAsWatched.value = it
+            }
+
+            dataState.error?.let { error ->
+                Log.d(TAG, "movieListError: $error")
+
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    val movieList: MutableState<List<MovieResponse>> = mutableStateOf(listOf())
+
+    private fun getMovie(query: String) {
             searchMovie.execute(query).onEach { dataState ->
                 loading.value = dataState.loading
 
@@ -86,7 +227,5 @@ class MovieViewModel
                     movieList.value = listOf()
                 }
             }.launchIn(viewModelScope)
-
     }
-
 }
