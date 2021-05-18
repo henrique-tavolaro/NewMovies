@@ -4,13 +4,14 @@ import com.example.newmovies.business.data.cache.abstraction.CacheMovieDataSourc
 import com.example.newmovies.business.domain.state.DataState
 import com.example.newmovies.framework.datasource.cache.mappers.SavedMovieMapper
 import com.example.newmovies.framework.datasource.cache.model.SavedMovie
+import dagger.Provides
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class AddMovieAsWatched (
+class AddMovieAsWatched(
     private val cacheMovieDataSource: CacheMovieDataSource,
-private val savedMovieMapper: SavedMovieMapper
-){
+    private val savedMovieMapper: SavedMovieMapper
+) {
 
 
     fun execute(

@@ -8,21 +8,21 @@ import com.example.newmovies.framework.datasource.cache.model.SavedMovie
 
 interface CacheMovieDataSource {
 
-    suspend fun insertCachedMovieDetail(cachedMovieDetail: CachedMovieDetail)
+    suspend fun insertCachedMovieDetail(cachedMovieDetail: CachedMovieDetail) : Long
 
-    suspend fun insertCachedMovieList(cachedMovieList: List<CachedMovie>)
+    suspend fun insertCachedMovieList(cachedMovieList: List<CachedMovie>) : LongArray
 
     suspend fun getMovieFromCache(query: String): List<MovieResponse>
 
     suspend fun getMovieDetailsFromCache(imdbId: String): MovieDetailResponse
 
-    suspend fun insertMovieToWatchList(movie: SavedMovie)
+    suspend fun insertMovieToWatchList(movie: SavedMovie) : Long
 
-    suspend fun insertMovieAsWatched(movie: SavedMovie)
+    suspend fun insertMovieAsWatched(movie: SavedMovie) : Long
 
-    suspend fun updateMovieToWatchList(movie: SavedMovie)
+    suspend fun updateMovieToWatchList(movie: SavedMovie) : Long
 
-    suspend fun updateMovieAsWatched(movie: SavedMovie)
+    suspend fun updateMovieAsWatched(movie: SavedMovie) : Long
 
     suspend fun getAllMovies(): List<SavedMovie>
 

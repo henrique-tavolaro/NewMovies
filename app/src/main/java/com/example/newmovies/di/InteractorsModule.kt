@@ -14,6 +14,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.scopes.ViewModelScoped
+import javax.inject.Named
 
 @Module
 @InstallIn(ViewModelComponent::class)
@@ -71,8 +72,8 @@ class InteractorsModule {
     fun provideAddMovieAsWatched(
         cacheMovieDataSource: CacheMovieDataSource,
         savedMovieMapper: SavedMovieMapper
-    ): AddMovieToWatchList {
-        return AddMovieToWatchList(
+    ): AddMovieAsWatched {
+        return AddMovieAsWatched(
             cacheMovieDataSource = cacheMovieDataSource,
             savedMovieMapper = savedMovieMapper
         )

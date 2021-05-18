@@ -7,8 +7,9 @@ import com.example.newmovies.framework.datasource.cache.mappers.SavedMovieMapper
 import com.example.newmovies.framework.datasource.cache.model.SavedMovie
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
-class AddMovieToWatchList(
+class AddMovieToWatchList (
     private val cacheMovieDataSource: CacheMovieDataSource,
     private val savedMovieMapper: SavedMovieMapper
 ) {

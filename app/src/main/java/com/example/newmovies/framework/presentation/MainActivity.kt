@@ -35,21 +35,21 @@ class MainActivity : AppCompatActivity() {
             val movieDetail = viewModel.movieDetails.value
            Column{
                Button(onClick = {
-                   viewModel.getMovie("batman")
+//                   viewModel.getMovie("batman")
                    Log.d("debugtag2", movieList.toString())
                }) {
                    Text(text = "click")
 
                }
                Button(onClick = {
-                   viewModel.getMovieDetails("tt0372784")
+//                   viewModel.getMovieDetails("tt0372784")
                    Log.d("debugtag2", movieDetail.toString())
                }) {
                    Text(text = "click2")
 
                }
                Button(onClick = {
-                   viewModel.insertMovieToWatchList("tt0372784")
+//                   viewModel.insertMovieToWatchList("tt0372784")
                    Log.d("debugtag2", movieDetail.toString())
                }) {
                    Text(text = "click3")

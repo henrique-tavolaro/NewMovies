@@ -17,14 +17,17 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Named
 
 @HiltViewModel
 class MovieViewModel
 @Inject constructor(
     private val searchMovie: SearchMovie,
     private val getMovieDetails: GetMovieDetails,
+//    @Named ("ToWatchList")
     private val addMovieToWatchList: AddMovieToWatchList,
     private val addMovieAsWatched: AddMovieAsWatched,
+//    @Named ("updateAsWatched")
     private val updateMovieAsWatched: UpdateMovieAsWatched,
     private val updateMovieToWatchList: UpdateMovieToWatchList,
     private val deleteSavedMovie: DeleteSavedMovie,
