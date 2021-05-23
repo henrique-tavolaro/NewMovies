@@ -14,6 +14,7 @@ import com.example.newmovies.framework.datasource.cache.mappers.SavedMovieMapper
 import com.example.newmovies.framework.datasource.network.implementation.RetrofitService
 import com.example.newmovies.framework.datasource.network.mappers.DetailResponseMapper
 import com.example.newmovies.framework.datasource.network.mappers.ResponseMapper
+import com.example.newmovies.framework.presentation.BaseApplication
 import com.example.newmovies.util.BASE_URL
 import com.example.newmovies.util.DATABASE
 import com.google.gson.GsonBuilder
@@ -29,6 +30,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class AppModule {
+
 
     @Singleton
     @Provides

@@ -12,8 +12,6 @@ class AddMovieAsWatched(
     private val cacheMovieDataSource: CacheMovieDataSource,
     private val savedMovieMapper: SavedMovieMapper
 ) {
-
-
     fun execute(
         imdbId: String
     ): Flow<DataState<SavedMovie>> = flow {
@@ -22,13 +20,15 @@ class AddMovieAsWatched(
 
             //get movie from cache
             val cacheResult = cacheMovieDataSource.getMovieDetailsFromCache(imdbId)
-            val movieToSave = savedMovieMapper.responseListToEntityList(cacheResult)
+            val movieToSave = savedMovieMapper.responseListToEntityList(cacheResult!!)
             movieToSave.watched = true
 
             // convert to saved movie insert into saved movie
-            cacheMovieDataSource.insertMovieToWatchList(movieToSave)
+            cacheMovieDataSource.insertMovieAsWatched(movieToSave)
 
-            emit(DataState.success(savedMovieMapper.responseListToEntityList(cacheResult)))
+
+
+            emit(DataState.success(savedMovieMapper.responseListToEntityList(savedMovieMapper.entityListToResponseList(movieToSave))))
 
         } catch (e: Exception) {
             emit(DataState.error<SavedMovie>(e.message ?: "Unknown Error"))

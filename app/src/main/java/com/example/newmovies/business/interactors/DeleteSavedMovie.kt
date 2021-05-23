@@ -18,7 +18,7 @@ class DeleteSavedMovie(
 
             val savedMovie = cacheMovieDataSource.getSavedMovie(imdbId)
 
-            cacheMovieDataSource.deleteSavedMovie(savedMovie)
+            cacheMovieDataSource.deleteSavedMovie(savedMovie!!)
             emit(DataState.success(savedMovie))
         } catch (e: Exception) {
             emit(DataState.error<SavedMovie>(e.message ?: "Unknown Error"))

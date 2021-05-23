@@ -2,7 +2,6 @@ package com.example.newmovies.business.interactors
 
 import com.example.newmovies.business.data.cache.AppDatabaseFake
 import com.example.newmovies.business.data.cache.FakeCacheMovieDataSourceImpl
-import com.example.newmovies.business.data.network.MockWebServerResponses
 import com.example.newmovies.business.data.network.MockWebServerResponses.movieDetailResponse
 import com.example.newmovies.business.data.network.abstraction.NetworkMovieDataSource
 import com.example.newmovies.business.data.network.implementation.NetworkMovieDataSourceImpl
@@ -10,7 +9,6 @@ import com.example.newmovies.business.domain.model.MovieDetailResponse
 import com.example.newmovies.framework.datasource.cache.mappers.CacheMovieMapper
 import com.example.newmovies.framework.datasource.cache.mappers.CachedMovieDetailsMapper
 import com.example.newmovies.framework.datasource.cache.mappers.SavedMovieMapper
-import com.example.newmovies.framework.datasource.cache.model.CachedMovieDetail
 import com.example.newmovies.framework.datasource.network.implementation.RetrofitService
 import com.example.newmovies.framework.datasource.network.mappers.DetailResponseMapper
 import com.example.newmovies.framework.datasource.network.mappers.ResponseMapper
@@ -32,7 +30,7 @@ class GetMovieDetailsTest {
     private val appDatabase = AppDatabaseFake()
     private lateinit var mockWebServer: MockWebServer
     private lateinit var baseUrl: HttpUrl
-    private val DUMMY_QUERY = "batman"
+    private val QUERY = "tt0096895"
 
     //system in test
     private lateinit var getMovieDetails: GetMovieDetails
@@ -87,14 +85,35 @@ class GetMovieDetailsTest {
                 .setBody(movieDetailResponse)
         )
 
-//        assert(fakeCacheMovieDataSourceImpl.getMovieDetailsFromCache(DUMMY_QUERY).equals())
 
-        val flowItems = getMovieDetails.execute(DUMMY_QUERY).toList()
+        val flowItems = getMovieDetails.execute(QUERY).toList()
+        print(flowItems)
 
         val movieDetail = flowItems[1].data
 
         assert(movieDetail is MovieDetailResponse)
     }
+
+    @Test
+    fun getMovieDetailFromFailedNetwork_emitFromCache_returnError() = runBlocking{
+
+        mockWebServer.enqueue(
+            MockResponse()
+                .setResponseCode(HttpURLConnection.HTTP_BAD_REQUEST)
+                .setBody(movieDetailResponse)
+        )
+
+
+
+        val flowItems = getMovieDetails.execute(QUERY).toList()
+        print(flowItems)
+
+        val movieDetail = flowItems[1]
+
+        assert(movieDetail.data == null)
+        assert(movieDetail.error != null)
+    }
+
 
     @AfterEach
     fun tearDown(){

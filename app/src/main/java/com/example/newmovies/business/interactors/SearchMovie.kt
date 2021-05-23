@@ -24,20 +24,28 @@ class SearchMovie(
         try {
             emit(DataState.loading())
 
-            // get the list of movies from network and convert to model
-            val movieList = getMoviesFromNetwork(query)
+            var cache: List<MovieResponse> = listOf()
 
-            // convert into entity and insert into the cache
-            cacheMovieDataSource.insertCachedMovieList(
-                cacheMovieMapper.responseListToEntityList(
-                    movieList
+            // check if movie is in cache
+            val movieListFromCache = cacheMovieDataSource.getMovieFromCache(query)
+            if (movieListFromCache.isNotEmpty()){
+                cache = movieListFromCache
+            } else {
+                // get the list of movies from network and convert to model
+                val movieList = getMoviesFromNetwork(query)
+
+                // convert into entity and insert into the cache
+                cacheMovieDataSource.insertCachedMovieList(
+                    cacheMovieMapper.responseListToEntityList(
+                        movieList
+                    )
                 )
-            )
 
-            //query the cache and emit
-            val cacheResult = cacheMovieDataSource.getMovieFromCache(query)
+                //query the cache and emit
+                cache = cacheMovieDataSource.getMovieFromCache(query)
+            }
 
-            emit(DataState.success(cacheResult))
+            emit(DataState.success(cache))
 
         } catch (e: Exception) {
             emit(DataState.error<List<MovieResponse>>(e.message ?: "Unknown Error"))

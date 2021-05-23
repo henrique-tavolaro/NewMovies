@@ -7,6 +7,7 @@ import com.example.newmovies.business.domain.state.DataState
 import com.example.newmovies.framework.datasource.cache.mappers.CachedMovieDetailsMapper
 import com.example.newmovies.framework.datasource.cache.mappers.SavedMovieMapper
 import com.example.newmovies.framework.datasource.network.mappers.DetailResponseMapper
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.lang.Exception
@@ -25,6 +26,7 @@ class GetMovieDetails(
         try {
             emit(DataState.loading())
 
+            delay(1500)
             //get movie detail and covert to model
             val movieDetail = getMovieDetailFromNetwork(imdbId)
 
@@ -35,7 +37,10 @@ class GetMovieDetails(
             //query the cache and emit
             val cacheResult = cacheMovieDataSource.getMovieDetailsFromCache(imdbId)
 
-            emit(DataState.success(cacheResult))
+            if(cacheResult != null){
+                emit(DataState.success(cacheResult))
+            }
+
 
         } catch (e: Exception) {
             emit(DataState.error<MovieDetailResponse>(e.message ?: "Unknown Error"))
@@ -46,7 +51,7 @@ class GetMovieDetails(
         return detailResponseMapper.responseListToEntityList(
             networkMovieDataSource.getMovieDetails(
                 imdbId
-            )
+            )!!
         )
     }
 }

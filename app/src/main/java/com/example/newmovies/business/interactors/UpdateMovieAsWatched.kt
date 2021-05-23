@@ -18,7 +18,7 @@ class UpdateMovieAsWatched(
 
             val savedMovie = cacheMovieDataSource.getSavedMovie(imdbId)
 
-            savedMovie.onToWatchList = false
+            savedMovie!!.onToWatchList = false
             savedMovie.watched = true
 
             cacheMovieDataSource.updateMovieAsWatched(savedMovie)

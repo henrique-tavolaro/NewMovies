@@ -2,14 +2,14 @@ package com.example.newmovies.business.interactors
 
 import com.example.newmovies.business.data.cache.AppDatabaseFake
 import com.example.newmovies.business.data.cache.FakeCacheMovieDataSourceImpl
-import com.example.newmovies.business.data.network.MockWebServerResponses.searchError
-import com.example.newmovies.business.data.network.MockWebServerResponses.searchSuccess
+import com.example.newmovies.business.data.network.MockWebServerResponses
 import com.example.newmovies.business.data.network.abstraction.NetworkMovieDataSource
 import com.example.newmovies.business.data.network.implementation.NetworkMovieDataSourceImpl
-import com.example.newmovies.business.domain.model.MovieResponse
 import com.example.newmovies.framework.datasource.cache.mappers.CacheMovieMapper
 import com.example.newmovies.framework.datasource.cache.mappers.CachedMovieDetailsMapper
+import com.example.newmovies.framework.datasource.cache.mappers.SavedMovieMapper
 import com.example.newmovies.framework.datasource.network.implementation.RetrofitService
+import com.example.newmovies.framework.datasource.network.mappers.DetailResponseMapper
 import com.example.newmovies.framework.datasource.network.mappers.ResponseMapper
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.flow.toList
@@ -18,31 +18,34 @@ import okhttp3.HttpUrl
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.net.HttpURLConnection
 
-class SearchMovieTest {
-
+internal class GetAllSavedMoviesTest{
     private val appDatabase = AppDatabaseFake()
     private lateinit var mockWebServer: MockWebServer
     private lateinit var baseUrl: HttpUrl
-    private val QUERY = "batman"
+    private val IMDBID = "tt0096895"
+    private lateinit var getMovieDetails: GetMovieDetails
+    private lateinit var addMovieAsWatched: AddMovieAsWatched
 
     //system in test
-    private lateinit var searchMovie: SearchMovie
+    private lateinit var getAllSavedMovies: GetAllSavedMovies
 
     //Dependencies
     private lateinit var retrofitService: RetrofitService
     private lateinit var fakeCacheMovieDataSourceImpl: FakeCacheMovieDataSourceImpl
     private lateinit var fakeNetworkMovieDataSource: NetworkMovieDataSource
     private val responseMapper = ResponseMapper()
-//    private val detailResponseMapper = DetailResponseMapper()
+    private val detailResponseMapper = DetailResponseMapper()
     private val cachedMovieDetailsMapper = CachedMovieDetailsMapper()
     private val cacheMovieMapper = CacheMovieMapper()
-//    private val savedMovieMapper = SavedMovieMapper()
+    private val savedMovieMapper = SavedMovieMapper()
+
 
     @BeforeEach
     fun setup() {
@@ -64,94 +67,62 @@ class SearchMovieTest {
 
         fakeNetworkMovieDataSource = NetworkMovieDataSourceImpl(retrofitService)
 
-        //instantiate the system in test
-        searchMovie = SearchMovie(
+        //instantiate the system
+        getMovieDetails = GetMovieDetails(
             networkMovieDataSource = fakeNetworkMovieDataSource,
             cacheMovieDataSource = fakeCacheMovieDataSourceImpl,
-            responseMapper = responseMapper,
-            cacheMovieMapper = cacheMovieMapper
-        )
-    }
-
-    @Test
-    fun getMovieFromNetwork_emitMovieFromCache() = runBlocking{
-
-        mockWebServer.enqueue(
-            MockResponse()
-                .setResponseCode(HttpURLConnection.HTTP_OK)
-                .setBody(searchSuccess)
+            cacheMovieDetailMapper = cachedMovieDetailsMapper,
+            detailResponseMapper = detailResponseMapper,
+            savedMovieMapper = savedMovieMapper
         )
 
-        // confirm the cache is empty to start
-        assert(fakeCacheMovieDataSourceImpl.getMovieFromCache(QUERY).isEmpty())
+        addMovieAsWatched = AddMovieAsWatched(
+            cacheMovieDataSource = fakeCacheMovieDataSourceImpl,
+            savedMovieMapper = savedMovieMapper
+        )
 
-        val flowItems = searchMovie.execute(QUERY).toList()
-
-        // confirm the cache is no longer empty
-
-        assert(fakeCacheMovieDataSourceImpl.getMovieFromCache(QUERY).isNotEmpty())
-
-//         first emission should be `loading`
-        assert(flowItems[0].loading)
-
-        // second emission should be the list of movies
-        val movieList = flowItems[1].data
-        assert(movieList?.size?: 0 > 0 )
-
-        // confirm they are actually movie objects
-        assert(movieList?.get(0) is MovieResponse)
-
-//         confirm loading is no longer true
-        assert(!flowItems[1].loading)
+        // instantiate the system in test
+        getAllSavedMovies = GetAllSavedMovies(
+            cacheMovieDataSource = fakeCacheMovieDataSourceImpl
+        )
 
     }
 
     @Test
-    fun getResponseFalseFromNetwork_emitError() = runBlocking {
+    fun addMovieToSavedList_getMovie() = runBlocking {
+
         mockWebServer.enqueue(
             MockResponse()
                 .setResponseCode(HttpURLConnection.HTTP_OK)
-                .setBody(searchError)
+                .setBody(MockWebServerResponses.movieDetailResponse)
         )
 
-        // confirm the cache is empty to start
-        assert(fakeCacheMovieDataSourceImpl.getMovieFromCache(QUERY).isEmpty())
+        //get movie from network and insert into cache
+        getMovieDetails.execute(IMDBID).toList()
 
-        val flowItems = searchMovie.execute(QUERY).toList()
-        print(flowItems)
+        // confirm cache is not empty and has the imdbId
+        assert(fakeCacheMovieDataSourceImpl.getMovieDetailsFromCache(IMDBID).imdbID == IMDBID)
 
-        // confirm the cache is still empty
-        assert(fakeCacheMovieDataSourceImpl.getMovieFromCache(QUERY).isEmpty())
+        // add movie to SavedList
+        addMovieAsWatched.execute(IMDBID).toList()
 
-        // first emission should be `loading`
-        assert(flowItems[0].loading)
+        // confirm the movie was saved
+        assert(fakeCacheMovieDataSourceImpl.getSavedMovie(IMDBID).imdbID == IMDBID)
 
-        // second emission should be the list of movies
-        val movieList = flowItems[1].error
-        assert(movieList != null)
+        // get all movies
 
-        // confirm loading is no longer true
-        assert(!flowItems[1].loading)
+        val flowItem = getAllSavedMovies.execute().toList()
+
+        // assert it got all movies
+
+        assert(flowItem[1].data != null)
+
+
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     @AfterEach
     fun tearDown(){
         mockWebServer.shutdown()
     }
-
 }

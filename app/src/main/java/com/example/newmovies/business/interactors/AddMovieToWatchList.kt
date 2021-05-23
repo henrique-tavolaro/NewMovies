@@ -22,7 +22,7 @@ class AddMovieToWatchList (
 
             //get movie from cache
             val cacheResult = cacheMovieDataSource.getMovieDetailsFromCache(imdbId)
-            val movieToSave = savedMovieMapper.responseListToEntityList(cacheResult)
+            val movieToSave = savedMovieMapper.responseListToEntityList(cacheResult!!)
             movieToSave.onToWatchList = true
 
             // convert to saved movie insert into saved movie

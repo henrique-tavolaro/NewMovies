@@ -14,7 +14,7 @@ interface CacheMovieDataSource {
 
     suspend fun getMovieFromCache(query: String): List<MovieResponse>
 
-    suspend fun getMovieDetailsFromCache(imdbId: String): MovieDetailResponse
+    suspend fun getMovieDetailsFromCache(imdbId: String): MovieDetailResponse?
 
     suspend fun insertMovieToWatchList(movie: SavedMovie) : Long
 
@@ -26,7 +26,7 @@ interface CacheMovieDataSource {
 
     suspend fun getAllMovies(): List<SavedMovie>
 
-    suspend fun getSavedMovie(imdbId: String): SavedMovie
+    suspend fun getSavedMovie(imdbId: String): SavedMovie?
 
     suspend fun deleteSavedMovie(movie: SavedMovie)
 }

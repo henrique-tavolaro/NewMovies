@@ -1,8 +1,10 @@
 package com.example.newmovies.framework.presentation
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.newmovies.business.domain.model.MovieDetailResponse
@@ -36,7 +38,20 @@ class MovieViewModel
 
 ) : ViewModel() {
 
+    val onLoad: MutableState<Boolean> = mutableStateOf(false)
+
     val loading = mutableStateOf(false)
+
+    val movieSearch = mutableStateOf("")
+
+    fun onTextChange(text: String) {
+        movieSearch.value = text
+        getMovie(text)
+    }
+
+    init {
+        onTriggerEvent(MovieEvent.GetAllSavedMovieEvent)
+    }
 
     fun onTriggerEvent(event: MovieEvent){
         viewModelScope.launch {
@@ -53,6 +68,7 @@ class MovieViewModel
                     }
                     is MovieEvent.GetAllSavedMovieEvent -> {
                         getAllSaved()
+                        Log.d(TAG, "movie event launched")
                     }
                     is MovieEvent.GetMovieDetailsEvent -> {
                         getMovieDetails(event.imdbId)
@@ -92,12 +108,13 @@ class MovieViewModel
                 Log.d(TAG, it)
             }
 
-        }
+        }.launchIn(viewModelScope)
     }
 
     val savedMovie: MutableState<SavedMovie?> = mutableStateOf(null)
 
-    private fun getSavedMovie(imdbId: String){
+
+    fun getSavedMovie(imdbId: String){
         getSavedMovie.execute(imdbId).onEach { dataState ->
             loading.value = dataState.loading
 
@@ -107,12 +124,13 @@ class MovieViewModel
 
             dataState.error?.let { error ->
                 Log.d(TAG, "movieListError: $error")
+//                Toast.makeText(requireContext(), "An error occurred: $error", Toast.LENGTH_LONG).show()
 
             }
         }.launchIn(viewModelScope)
     }
 
-    val getAllSaved: MutableState<List<SavedMovie>> = mutableStateOf(listOf())
+        val getAllSaved: MutableState<List<SavedMovie>> = mutableStateOf(listOf())
 
     private fun getAllSaved(){
         getAllSavedMovies.execute().onEach { dataState ->
@@ -120,12 +138,14 @@ class MovieViewModel
 
             dataState.data?.let {
                 getAllSaved.value = it
+                Log.d(TAG, it.toString())
             }
 
             dataState.error?.let { error ->
                 Log.d(TAG, "movieListError: $error")
+//                Toast.makeText(requireContext(), "An error occurred: $error", Toast.LENGTH_LONG).show()
             }
-        }
+        }.launchIn(viewModelScope)
     }
 
     val updateAsWatched: MutableState<SavedMovie?> = mutableStateOf(null)
@@ -140,6 +160,7 @@ class MovieViewModel
 
             dataState.error?.let { error ->
                 Log.d(TAG, "movieListError: $error")
+//                Toast.makeText(context, "Error updating movie: $error", Toast.LENGTH_LONG).show()
 
             }
         }.launchIn(viewModelScope)
@@ -157,6 +178,7 @@ class MovieViewModel
 
             dataState.error?.let { error ->
                 Log.d(TAG, "movieListError: $error")
+//                Toast.makeText(requireContext(), "Error updating movie: $error", Toast.LENGTH_LONG).show()
 
             }
         }.launchIn(viewModelScope)
@@ -174,6 +196,7 @@ class MovieViewModel
 
             dataState.error?.let { error ->
                 Log.d(TAG, "movieListError: $error")
+//                Toast.makeText(requireContext(), "Error getting movie details: $error", Toast.LENGTH_LONG).show()
 
             }
         }.launchIn(viewModelScope)
@@ -192,6 +215,7 @@ class MovieViewModel
 
             dataState.error?.let { error ->
                 Log.d(TAG, "movieListError: $error")
+//                Toast.makeText(requireContext(), "Error adding movie: $error", Toast.LENGTH_LONG).show()
 
             }
         }.launchIn(viewModelScope)
@@ -209,6 +233,7 @@ class MovieViewModel
 
             dataState.error?.let { error ->
                 Log.d(TAG, "movieListError: $error")
+//                Toast.makeText(requireContext(), "Error adding movie: $error", Toast.LENGTH_LONG).show()
 
             }
         }.launchIn(viewModelScope)
@@ -227,6 +252,7 @@ class MovieViewModel
 
                 dataState.error?.let { error ->
                     Log.d(TAG, "movieListError: $error")
+//                    Toast.makeText(requireContext(), "An error occurred: $error", Toast.LENGTH_LONG).show()
                     movieList.value = listOf()
                 }
             }.launchIn(viewModelScope)

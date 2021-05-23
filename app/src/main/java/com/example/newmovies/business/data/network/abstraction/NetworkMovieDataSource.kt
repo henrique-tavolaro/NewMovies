@@ -7,5 +7,5 @@ interface NetworkMovieDataSource {
 
     suspend fun getMovie(query: String) : Search
 
-    suspend fun getMovieDetails (imdbID: String) : DetailResponse
+    suspend fun getMovieDetails (imdbID: String) : DetailResponse?
 }
