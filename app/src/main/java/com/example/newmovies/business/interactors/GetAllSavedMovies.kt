@@ -15,11 +15,19 @@ class GetAllSavedMovies(
             emit(DataState.loading())
 
             val savedMovieList = cacheMovieDataSource.getAllMovies()
+            if(savedMovieList.isNotEmpty()){
+                try{
+                    emit(DataState.success(savedMovieList))
+                } catch (e: Exception){
+                    emit(DataState.error<List<SavedMovie>>(e.message ?: "Unknown Error"))
+                }
+            }
 
-            emit(DataState.success(savedMovieList))
+
 
         } catch (e: Exception) {
             emit(DataState.error<List<SavedMovie>>(e.message ?: "Unknown Error"))
         }
+
     }
 }

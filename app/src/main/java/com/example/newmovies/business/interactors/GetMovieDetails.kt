@@ -21,25 +21,31 @@ class GetMovieDetails(
 ) {
 
     fun execute(
-        imdbId: String
+        imdbId: String,
+        isNetworkAvailable: Boolean,
     ): Flow<DataState<MovieDetailResponse>> = flow {
         try {
             emit(DataState.loading())
 
             delay(1500)
             //get movie detail and covert to model
-            val movieDetail = getMovieDetailFromNetwork(imdbId)
+            if(isNetworkAvailable){
+                val movieDetail = getMovieDetailFromNetwork(imdbId)
 
-            //convert into entity and insert into cash
-            val cacheMovieDetail = cacheMovieDetailMapper.responseListToEntityList(movieDetail)
-            cacheMovieDataSource.insertCachedMovieDetail(cacheMovieDetail)
+                //convert into entity and insert into cash
+                val cacheMovieDetail = cacheMovieDetailMapper.responseListToEntityList(movieDetail)
+                cacheMovieDataSource.insertCachedMovieDetail(cacheMovieDetail)
 //            cacheMovieDataSource.insertMovieToWatchList(savedMovieMapper.responseListToEntityList(movieDetail))
-            //query the cache and emit
-            val cacheResult = cacheMovieDataSource.getMovieDetailsFromCache(imdbId)
+                //query the cache and emit
+                val cacheResult = cacheMovieDataSource.getMovieDetailsFromCache(imdbId)
 
-            if(cacheResult != null){
-                emit(DataState.success(cacheResult))
+                if(cacheResult != null){
+                    emit(DataState.success(cacheResult))
+                }
+            } else {
+                throw Exception("Unable to connect to the internet")
             }
+
 
 
         } catch (e: Exception) {

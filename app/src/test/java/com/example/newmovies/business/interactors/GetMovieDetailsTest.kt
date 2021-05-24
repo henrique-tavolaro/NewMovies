@@ -86,7 +86,7 @@ class GetMovieDetailsTest {
         )
 
 
-        val flowItems = getMovieDetails.execute(QUERY).toList()
+        val flowItems = getMovieDetails.execute(QUERY, true).toList()
         print(flowItems)
 
         val movieDetail = flowItems[1].data
@@ -105,7 +105,7 @@ class GetMovieDetailsTest {
 
 
 
-        val flowItems = getMovieDetails.execute(QUERY).toList()
+        val flowItems = getMovieDetails.execute(QUERY, true).toList()
         print(flowItems)
 
         val movieDetail = flowItems[1]

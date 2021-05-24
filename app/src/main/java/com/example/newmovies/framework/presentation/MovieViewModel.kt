@@ -13,6 +13,7 @@ import com.example.newmovies.business.interactors.*
 import com.example.newmovies.framework.datasource.cache.model.SavedMovie
 import com.example.newmovies.framework.presentation.state.MovieEvent
 import com.example.newmovies.framework.presentation.state.MovieStateEvent
+import com.example.newmovies.util.ConnectivityManager
 import com.example.newmovies.util.TAG
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -26,15 +27,14 @@ class MovieViewModel
 @Inject constructor(
     private val searchMovie: SearchMovie,
     private val getMovieDetails: GetMovieDetails,
-//    @Named ("ToWatchList")
     private val addMovieToWatchList: AddMovieToWatchList,
     private val addMovieAsWatched: AddMovieAsWatched,
-//    @Named ("updateAsWatched")
     private val updateMovieAsWatched: UpdateMovieAsWatched,
     private val updateMovieToWatchList: UpdateMovieToWatchList,
     private val deleteSavedMovie: DeleteSavedMovie,
     private val getAllSavedMovies: GetAllSavedMovies,
-    private val getSavedMovie: GetSavedMovie
+    private val getSavedMovie: GetSavedMovie,
+    private val connectivityManager: ConnectivityManager
 
 ) : ViewModel() {
 
@@ -187,7 +187,7 @@ class MovieViewModel
     val movieDetails: MutableState<MovieDetailResponse?> = mutableStateOf(null)
 
     private fun getMovieDetails(imdbId: String) {
-        getMovieDetails.execute(imdbId).onEach { dataState ->
+        getMovieDetails.execute(imdbId, connectivityManager.isNetworkAvailable.value).onEach { dataState ->
             loading.value = dataState.loading
 
             dataState.data?.let { data ->
@@ -242,7 +242,7 @@ class MovieViewModel
     val movieList: MutableState<List<MovieResponse>> = mutableStateOf(listOf())
 
     private fun getMovie(query: String) {
-            searchMovie.execute(query).onEach { dataState ->
+            searchMovie.execute(query, connectivityManager.isNetworkAvailable.value).onEach { dataState ->
                 loading.value = dataState.loading
 
                 dataState.data?.let { data ->

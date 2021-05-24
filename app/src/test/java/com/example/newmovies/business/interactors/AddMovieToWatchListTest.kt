@@ -93,7 +93,7 @@ internal class AddMovieToWatchListTest {
         )
 
         //get movie from network and insert into cache
-        getMovieDetails.execute(IMDBID).toList()
+        getMovieDetails.execute(IMDBID, true).toList()
 
         // confirm cache is not empty and has the imdbId
         assert(fakeCacheMovieDataSourceImpl.getMovieDetailsFromCache(IMDBID).imdbID == IMDBID)

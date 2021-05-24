@@ -19,7 +19,8 @@ class SearchMovie(
 ) {
 
     fun execute(
-        query: String
+        query: String,
+        isNetworkAvailable: Boolean,
     ): Flow<DataState<List<MovieResponse>>> = flow {
         try {
             emit(DataState.loading())
@@ -32,20 +33,27 @@ class SearchMovie(
                 cache = movieListFromCache
             } else {
                 // get the list of movies from network and convert to model
-                val movieList = getMoviesFromNetwork(query)
+                    if(isNetworkAvailable){
+                        val movieList = getMoviesFromNetwork(query)
 
-                // convert into entity and insert into the cache
-                cacheMovieDataSource.insertCachedMovieList(
-                    cacheMovieMapper.responseListToEntityList(
-                        movieList
-                    )
-                )
+                        // convert into entity and insert into the cache
+                        cacheMovieDataSource.insertCachedMovieList(
+                            cacheMovieMapper.responseListToEntityList(
+                                movieList
+                            )
+                        )
 
-                //query the cache and emit
-                cache = cacheMovieDataSource.getMovieFromCache(query)
+                        //query the cache and emit
+                        cache = cacheMovieDataSource.getMovieFromCache(query)
+                    }
+
+            }
+            if(cache.isNotEmpty()){
+                emit(DataState.success(cache))
+            } else {
+                throw Exception("Unable to get movie from the cache")
             }
 
-            emit(DataState.success(cache))
 
         } catch (e: Exception) {
             emit(DataState.error<List<MovieResponse>>(e.message ?: "Unknown Error"))

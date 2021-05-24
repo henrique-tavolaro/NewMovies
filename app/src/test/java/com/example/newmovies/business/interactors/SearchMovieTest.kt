@@ -85,7 +85,7 @@ class SearchMovieTest {
         // confirm the cache is empty to start
         assert(fakeCacheMovieDataSourceImpl.getMovieFromCache(QUERY).isEmpty())
 
-        val flowItems = searchMovie.execute(QUERY).toList()
+        val flowItems = searchMovie.execute(QUERY, true).toList()
 
         // confirm the cache is no longer empty
 
@@ -117,7 +117,7 @@ class SearchMovieTest {
         // confirm the cache is empty to start
         assert(fakeCacheMovieDataSourceImpl.getMovieFromCache(QUERY).isEmpty())
 
-        val flowItems = searchMovie.execute(QUERY).toList()
+        val flowItems = searchMovie.execute(QUERY, true).toList()
         print(flowItems)
 
         // confirm the cache is still empty

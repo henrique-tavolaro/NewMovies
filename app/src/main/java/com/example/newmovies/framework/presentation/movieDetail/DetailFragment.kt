@@ -1,5 +1,7 @@
 package com.example.newmovies.framework.presentation.movieDetail
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material.icons.filled.WatchLater
 import androidx.compose.runtime.mutableStateOf
@@ -103,6 +106,24 @@ class DetailFragment : Fragment() {
                                     movieDetailFromNetwork.actors
                                 )
                             }
+                            val url = "https://www.imdb.com/title/${args.imdbId}"
+                            if(savedMovie != null || movieDetailFromNetwork != null){
+                                Button(
+                                    modifier = Modifier
+                                        .padding(8.dp)
+                                        .fillMaxWidth(),
+                                    onClick = {
+                                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                                        startActivity(intent)
+                                    }
+                                ){
+                                    Text("Check on Imdb Website", Modifier.padding(end = 8.dp))
+                                    Icon(Icons.Default.ExitToApp, null)
+                                }
+
+                            }
+
+
                             if (savedMovie != null && savedMovie.onToWatchList) {
                                 Button(
                                     modifier = Modifier
@@ -225,273 +246,3 @@ class DetailFragment : Fragment() {
 
         }
     }
-//}
-
-//}
-//
-//                //movie already on room and onToWatchList and updated to the watchedList
-//                if (savedMovie != null && savedMovie.onToWatchList) {
-//                    Column(modifier = Modifier.padding(8.dp)) {
-//                        MovieFields(
-//                            savedMovie.year,
-//                            savedMovie.director,
-//                            savedMovie.genre,
-//                            savedMovie.imdbRating,
-//                            savedMovie.poster,
-//                            savedMovie.plot,
-//                            savedMovie.actors
-//                        )
-//                        Button(
-//                            modifier = Modifier
-//                                .padding(8.dp)
-//                                .fillMaxWidth(),
-//                            onClick = {
-//                                viewModel.onTriggerEvent(MovieEvent.UpdateMovieAsWatchedEvent(args.imdbId))
-//                                viewModel.onTriggerEvent(MovieEvent.GetSavedMovieEvent(args.imdbId))
-//
-//
-//                            }
-//                        ) {
-//                            Icon(Icons.Default.Movie, contentDescription = "Watched")
-//                            Text(
-//                                modifier = Modifier.padding(start = 4.dp),
-//                                text = "Rank and add to watched"
-//                            )
-//                        }
-//                    }
-//                } //movie already watched and assigned toWatchList again
-//                else if (savedMovie != null && savedMovie.watched) {
-//                    Column(modifier = Modifier.padding(8.dp)) {
-//                        MovieFields(
-//                            savedMovie.year,
-//                            savedMovie.director,
-//                            savedMovie.genre,
-//                            savedMovie.imdbRating,
-//                            savedMovie.poster,
-//                            savedMovie.plot,
-//                            savedMovie.actors
-//                        )
-//                        Button(
-//                            modifier = Modifier
-//                                .padding(8.dp)
-//                                .fillMaxWidth(),
-//                            onClick = {
-//                                viewModel.onTriggerEvent(MovieEvent.UpdateMovieToWatchListEvent(args.imdbId))
-//                                viewModel.onTriggerEvent(MovieEvent.GetSavedMovieEvent(args.imdbId))
-//                            }
-//                        ) {
-//                            Icon(Icons.Default.WatchLater, contentDescription = "Watch Later")
-//                            Text(
-//                                modifier = Modifier.padding(start = 4.dp),
-//                                text = "Add to watch list"
-//                            )
-//                        }
-//                    }
-//                }
-//                //movie not saved yet
-//                else if (movieDetailFromNetwork != null) {
-//                    Column(modifier = Modifier.padding(8.dp)) {
-//                        MovieFields(
-//                            movieDetailFromNetwork.year,
-//                            movieDetailFromNetwork.director,
-//                            movieDetailFromNetwork.genre,
-//                            movieDetailFromNetwork.imdbRating,
-//                            movieDetailFromNetwork.poster,
-//                            movieDetailFromNetwork.plot,
-//                            movieDetailFromNetwork.actors
-//                        )
-//                        Row(
-//                            modifier = Modifier.fillMaxWidth()
-//                        ) {
-//                            Button(
-//                                modifier = Modifier
-//                                    .padding(8.dp)
-//                                    .weight(1f),
-//                                onClick = {
-//                                    viewModel.onTriggerEvent(
-//                                        MovieEvent.AddMovieToWatchListEvent(
-//                                            args.imdbId
-//                                        )
-//                                    )
-//                                    viewModel.onTriggerEvent(MovieEvent.GetSavedMovieEvent(args.imdbId))
-//
-//                                }
-//                            ) {
-//                                Icon(
-//                                    Icons.Default.WatchLater,
-//                                    contentDescription = "Watch Later"
-//                                )
-//                                Text(
-//                                    modifier = Modifier.padding(start = 4.dp),
-//                                    text = "Add to watch list"
-//                                )
-//                            }
-//                            Button(
-//                                modifier = Modifier
-//                                    .padding(8.dp)
-//                                    .weight(1f),
-//                                onClick = {
-//                                    viewModel.onTriggerEvent(MovieEvent.AddMovieAsWatchedEvent(args.imdbId))
-//                                    viewModel.onTriggerEvent(MovieEvent.GetSavedMovieEvent(args.imdbId))
-//
-//
-//                                }
-//                            ) {
-//                                Icon(Icons.Default.Movie, contentDescription = "Watched")
-//                                Text(
-//                                    modifier = Modifier.padding(start = 4.dp),
-//                                    text = "Rank and add to watched"
-//                                )
-//                            }
-//                        }
-//                    }
-//                } else {
-//                    Text(text = "Something went wrong")
-//                }
-//            }
-
-//
-//
-//val args: DetailFragmentArgs by navArgs()
-//val movieDetailFromNetwork = viewModel.movieDetails.value
-//val savedMovie = viewModel.savedMovie.value
-//viewModel.onTriggerEvent(MovieEvent.GetSavedMovieEvent(args.imdbId))
-//viewModel.onTriggerEvent(MovieEvent.GetMovieDetailsEvent(args.imdbId))
-//
-//Scaffold(
-//topBar = {
-//    TopAppBar(
-//        title = {
-//            Text(text = args.title)
-//        },
-//        navigationIcon = {
-//            IconButton(onClick = {
-//                findNavController().navigate(R.id.action_detailFragment_to_movieListFragment)
-//            }) {
-//                Icon(Icons.Default.ArrowBack, contentDescription = null)
-//            }
-//        }
-//    )
-//}
-//) {
-//    //movie already on room and onToWatchList and updated to the watchedList
-//    if (savedMovie != null && savedMovie.onToWatchList) {
-//        Column(modifier = Modifier.padding(8.dp)) {
-//            MovieFields(
-//                savedMovie.year,
-//                savedMovie.director,
-//                savedMovie.genre,
-//                savedMovie.imdbRating,
-//                savedMovie.poster,
-//                savedMovie.plot,
-//                savedMovie.actors
-//            )
-//            Button(
-//                modifier = Modifier
-//                    .padding(8.dp)
-//                    .fillMaxWidth(),
-//                onClick = {
-//                    viewModel.onTriggerEvent(MovieEvent.UpdateMovieAsWatchedEvent(args.imdbId))
-//                    viewModel.onTriggerEvent(MovieEvent.GetSavedMovieEvent(args.imdbId))
-//
-//
-//                }
-//            ) {
-//                Icon(Icons.Default.Movie, contentDescription = "Watched")
-//                Text(
-//                    modifier = Modifier.padding(start = 4.dp),
-//                    text = "Rank and add to watched"
-//                )
-//            }
-//        }
-//    } //movie already watched and assigned toWatchList again
-//    else if (savedMovie != null && savedMovie.watched) {
-//        Column(modifier = Modifier.padding(8.dp)) {
-//            MovieFields(
-//                savedMovie.year,
-//                savedMovie.director,
-//                savedMovie.genre,
-//                savedMovie.imdbRating,
-//                savedMovie.poster,
-//                savedMovie.plot,
-//                savedMovie.actors
-//            )
-//            Button(
-//                modifier = Modifier
-//                    .padding(8.dp)
-//                    .fillMaxWidth(),
-//                onClick = {
-//                    viewModel.onTriggerEvent(MovieEvent.UpdateMovieToWatchListEvent(args.imdbId))
-//                    viewModel.onTriggerEvent(MovieEvent.GetSavedMovieEvent(args.imdbId))
-//                }
-//            ) {
-//                Icon(Icons.Default.WatchLater, contentDescription = "Watch Later")
-//                Text(
-//                    modifier = Modifier.padding(start = 4.dp),
-//                    text = "Add to watch list"
-//                )
-//            }
-//        }
-//    }
-//    //movie not saved yet
-//    else if (movieDetailFromNetwork != null) {
-//        Column(modifier = Modifier.padding(8.dp)) {
-//            MovieFields(
-//                movieDetailFromNetwork.year,
-//                movieDetailFromNetwork.director,
-//                movieDetailFromNetwork.genre,
-//                movieDetailFromNetwork.imdbRating,
-//                movieDetailFromNetwork.poster,
-//                movieDetailFromNetwork.plot,
-//                movieDetailFromNetwork.actors
-//            )
-//            Row(
-//                modifier = Modifier.fillMaxWidth()
-//            ) {
-//                Button(
-//                    modifier = Modifier
-//                        .padding(8.dp)
-//                        .weight(1f),
-//                    onClick = {
-//                        viewModel.onTriggerEvent(MovieEvent.AddMovieToWatchListEvent(args.imdbId))
-//                        viewModel.onTriggerEvent(MovieEvent.GetSavedMovieEvent(args.imdbId))
-//
-//                    }
-//                ) {
-//                    Icon(
-//                        Icons.Default.WatchLater,
-//                        contentDescription = "Watch Later"
-//                    )
-//                    Text(
-//                        modifier = Modifier.padding(start = 4.dp),
-//                        text = "Add to watch list"
-//                    )
-//                }
-//                Button(
-//                    modifier = Modifier
-//                        .padding(8.dp)
-//                        .weight(1f),
-//                    onClick = {
-//                        viewModel.onTriggerEvent(MovieEvent.AddMovieAsWatchedEvent(args.imdbId))
-//                        viewModel.onTriggerEvent(MovieEvent.GetSavedMovieEvent(args.imdbId))
-//
-//
-//                    }
-//                ) {
-//                    Icon(Icons.Default.Movie, contentDescription = "Watched")
-//                    Text(
-//                        modifier = Modifier.padding(start = 4.dp),
-//                        text = "Rank and add to watched"
-//                    )
-//                }
-//            }
-//        }
-//    } else {
-//        Text(text = "Something went wrong")
-//    }
-//}
-//}
-//}
-//}
-//}
-//

@@ -11,6 +11,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.example.newmovies.framework.presentation.composables.CircularIndeterminateProgressBar
+import com.example.newmovies.framework.presentation.composables.ConnectivityMonitor
 
 private val DarkColorPalette = darkColors(
     primary = Purple200,
@@ -37,7 +38,7 @@ private val LightColorPalette = lightColors(
 @Composable
 fun NewMoviesTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    displayProgressBar: Boolean,
+    isNetworkAvailable: Boolean,
     content: @Composable() () -> Unit
 ) {
 
@@ -55,10 +56,10 @@ fun NewMoviesTheme(
                     .background(color = if (!darkTheme) Color.LightGray else Color.Black)
             ) {
                 Column{
-//                    ConnectivityMonitor(isNetworkAvailable = isNetworkAvailable)
+                    ConnectivityMonitor(isNetworkAvailable = isNetworkAvailable)
                     content()
                 }
-                CircularIndeterminateProgressBar(isDisplayed = displayProgressBar, 0.3f)
+//                CircularIndeterminateProgressBar(isDisplayed = displayProgressBar, 0.3f)
             }
         }
 }

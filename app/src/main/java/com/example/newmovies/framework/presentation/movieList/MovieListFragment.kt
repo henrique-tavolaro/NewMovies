@@ -27,13 +27,29 @@ import com.example.newmovies.framework.presentation.bottomNavigation.Screen
 import com.example.newmovies.framework.presentation.composables.ScreenController
 import com.example.newmovies.framework.presentation.state.MovieEvent
 import com.example.newmovies.framework.presentation.ui.theme.NewMoviesTheme
+import com.example.newmovies.util.ConnectivityManager
 import com.example.newmovies.util.TAG
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MovieListFragment : Fragment() {
 
     private val viewModel: MovieViewModel by viewModels()
+
+
+    @Inject
+    lateinit var connectivityManager: ConnectivityManager
+
+    override fun onStart() {
+        super.onStart()
+        connectivityManager.registerConnectionObserver(this)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        connectivityManager.unregisterConnectionObserver(this)
+    }
 
     @ExperimentalComposeUiApi
     override fun onCreateView(
@@ -43,7 +59,7 @@ class MovieListFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
 //                val loading = viewModel.loading.value
-//                NewMoviesTheme(displayProgressBar = loading) {
+                NewMoviesTheme(isNetworkAvailable = connectivityManager.isNetworkAvailable.value) {
                     val navController = rememberNavController()
                     val title = remember { mutableStateOf("Search Movie") }
                     val watchedList = remember { mutableStateOf(mutableListOf<SavedMovie>()) }
@@ -121,4 +137,4 @@ class MovieListFragment : Fragment() {
         }
 
     }
-//}
+}
