@@ -27,7 +27,6 @@ class GetMovieDetails(
         try {
             emit(DataState.loading())
 
-            delay(1500)
             //get movie detail and covert to model
             if(isNetworkAvailable){
                 val movieDetail = getMovieDetailFromNetwork(imdbId)

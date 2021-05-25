@@ -17,8 +17,6 @@ class GetSavedMovie(
         try {
             emit(DataState.loading())
 
-            delay(1500)
-
             val savedMovie = cacheMovieDataSource.getSavedMovie(imdbId)
 
             if(savedMovie != null){

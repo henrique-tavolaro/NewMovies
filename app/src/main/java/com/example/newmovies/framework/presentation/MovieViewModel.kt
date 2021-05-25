@@ -68,13 +68,13 @@ class MovieViewModel
                     }
                     is MovieEvent.GetAllSavedMovieEvent -> {
                         getAllSaved()
-                        Log.d(TAG, "movie event launched")
                     }
                     is MovieEvent.GetMovieDetailsEvent -> {
                         getMovieDetails(event.imdbId)
                     }
                     is MovieEvent.GetSavedMovieEvent -> {
                         getSavedMovie(event.imdbId)
+
                     }
                     is MovieEvent.SearchMovieEvent -> {
                         getMovie(event.query)
@@ -113,18 +113,17 @@ class MovieViewModel
 
     val savedMovie: MutableState<SavedMovie?> = mutableStateOf(null)
 
-
     fun getSavedMovie(imdbId: String){
         getSavedMovie.execute(imdbId).onEach { dataState ->
             loading.value = dataState.loading
 
             dataState.data?.let {
                 savedMovie.value = it
+                Log.d("getSavedMovie", it.toString())
             }
 
             dataState.error?.let { error ->
                 Log.d(TAG, "movieListError: $error")
-//                Toast.makeText(requireContext(), "An error occurred: $error", Toast.LENGTH_LONG).show()
 
             }
         }.launchIn(viewModelScope)
